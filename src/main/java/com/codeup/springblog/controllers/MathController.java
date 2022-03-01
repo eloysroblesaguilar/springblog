@@ -1,4 +1,4 @@
-package com.codeup.springblog;
+package com.codeup.springblog.controllers;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

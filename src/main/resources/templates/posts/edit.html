@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit a Post</title>
+</head>
+<body>
+<form th:action="@{/posts/{id}/edit (id = ${editPost.getId()})}" th:method="POST">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text"  id="title" name="title" th:value="${editPost.getTitle()}">
+    </div>
+    <input type="hidden" th:value="${editPost.getId()}">
+    <div class="form-group">
+        <label for="body">Body</label>
+        <textarea  id="body" rows="3" name="body" th:text="${editPost.getBody()}"></textarea>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
