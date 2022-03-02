@@ -4,13 +4,11 @@ import com.codeup.springblog.models.Post;
 import com.codeup.springblog.models.User;
 import com.codeup.springblog.repositories.PostRepository;
 import com.codeup.springblog.repositories.UserRepository;
+import com.codeup.springblog.services.EmailService;
 import javafx.geometry.Pos;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,10 +19,12 @@ public class PostController {
 
     private PostRepository postsDao;
     private UserRepository usersDao;
+    private EmailService emailService;
 
-    public PostController(PostRepository postsDao, UserRepository usersDao) {
+    public PostController(PostRepository postsDao, UserRepository usersDao, EmailService emailService) {
         this.postsDao = postsDao;
         this.usersDao = usersDao;
+        this.emailService = emailService;
     }
 
     @GetMapping("/posts")
@@ -43,17 +43,18 @@ public class PostController {
     }
 
     @GetMapping("/posts/create")
-    public String create() {
+    public String create(Model model) {
+        model.addAttribute("post", new Post());
         return "posts/create";
     }
 
 
-
     @PostMapping("/posts/create")
-    public String submitCreateForm(@RequestParam(name = "title") String title, @RequestParam(name = "body") String body) {
+    public String submitCreateForm(@ModelAttribute Post post) {
         User user = usersDao.getById(1L);
-        Post newPost = new Post(title, body, user);
-        postsDao.save(newPost);
+        post.setUser(user);
+        emailService.prepareAndSend(post, "wake up", "new post just dropped");
+        postsDao.save(post);
 
         return "redirect:/posts";
     }
@@ -66,11 +67,8 @@ public class PostController {
     }
 
     @PostMapping("/posts/{id}/edit")
-    public String submitEdit(@RequestParam(name = "title") String title, @RequestParam(name = "body") String body, @PathVariable long id) {
-        Post editPost = postsDao.getById(id);
-        editPost.setTitle(title);
-        editPost.setBody(body);
-        postsDao.save(editPost);
+    public String submitEdit(@ModelAttribute Post post) {
+       postsDao.save(post);
         return "redirect:/posts";
     }
 
