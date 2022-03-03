@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 @Controller
 public class PostController {
 
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public String index (Model model) {
+    public String index(Model model) {
         List<Post> posts = new ArrayList<>();
         posts = postsDao.findAll();
         model.addAttribute("posts", posts);
@@ -75,7 +76,9 @@ public class PostController {
 
     @PostMapping("/posts/{id}/edit")
     public String submitEdit(@ModelAttribute Post post) {
-       postsDao.save(post);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setUser(user);
+        postsDao.save(post);
         return "redirect:/posts";
     }
 

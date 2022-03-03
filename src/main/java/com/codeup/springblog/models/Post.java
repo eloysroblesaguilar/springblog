@@ -59,6 +59,10 @@ public class Post {
         this.body = body;
     }
 
+    public Post(String title) {
+        this.title = title;
+    }
+
     public String getTitle() {
         return title;
     }
